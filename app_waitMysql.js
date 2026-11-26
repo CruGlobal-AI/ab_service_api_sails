@@ -6,7 +6,13 @@ const path = require("path");
 
 const Mysql = require("mysql"); // our  {DB Connection}
 
+const AB = require("@digiserve/ab-utils");
+
 var config = require(path.join(__dirname, "config", "local.js"));
+
+// config/local.js no longer sets datastores (the sails ORM is off, see
+// config/hooks.js), so fall back to the ab-utils defaults for the DB we wait on.
+const siteDB = config.datastores?.site ?? AB.defaults.datastores().site;
 
 var displayCount = 0;
 function log(msg, lim) {
@@ -22,7 +28,7 @@ function log(msg, lim) {
 
 function Connect(cb) {
    // attempt connection:
-   var DB = Mysql.createConnection(config.datastores.site);
+   var DB = Mysql.createConnection(siteDB);
    // DB.on("error", (err) => {
    //    console.log("DB.on(error):", err);
 
